@@ -1,16 +1,31 @@
 ###
 ### Makefile for Gerp Project
 ###
-### Author:  YOUR NAME HERE
+### Author:  Drew Galen, Pablo Herra
 
-## 
-## Build up your Makefile in a similar manner as for Zap. Feel free 
-## to use that Makefile to guide you! Note, you do NOT need rules for
+## Note, you do NOT need rules for
 ## FSTree.o and DirNode.o as those (pre-compiled) object files are 
 ## provided to you.
-## 
-## At the end, you can delete this comment!
-## 
+
+CXX      = clang++
+CXXFLAGS = -g3 -Wall -Wextra -Wpedantic -Wshadow
+LDFLAGS  = -g3 
+
+# gerp rule - linking command
+gerp: gerp.o hasher.o main.o FSTree.o DirNode.o
+	${CXX} ${LDFLAGS} -o gerp gerp.o hasher.o main.o FSTree.o DirNode.o
+
+# This rule builds main.o
+main.o: main.cpp gerp.h
+	$(CXX) $(CXXFLAGS) -c main.cpp
+
+# This rule builds gerp.o
+gerp.o: gerp.cpp gerp.h DirNode.h FSTree.h
+	$(CXX) $(CXXFLAGS) -c gerp.cpp
+
+# The below rule will be used by unit_test.
+unit_test: unit_test_driver.o gerp.o
+	$(CXX) $(CXXFLAGS) $^
 
 ##
 ## Here is a special rule that removes all .o files besides the provided ones 
