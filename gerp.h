@@ -9,17 +9,17 @@
  *
  */
 
-#ifndef _GERP
-#define _GERP
+#ifndef _GERP_H
+#define _GERP_H
 
 #include <string>
 #include <map>
 #include <iostream>
 #include <fstream>
 
-class HuffmanCoder {
+class gerp {
    public:
-        run(std::string dir, ostream &outFile);
+        void run(std::string dir, std::ostream &outFile);
 
    private:
     

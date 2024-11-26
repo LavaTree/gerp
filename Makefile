@@ -23,8 +23,12 @@ main.o: main.cpp gerp.h
 gerp.o: gerp.cpp gerp.h DirNode.h FSTree.h
 	$(CXX) $(CXXFLAGS) -c gerp.cpp
 
+# This rule builds process.o
+processing.o: processing.h processing.cpp FSTree.h DirNode.h
+	$(CXX) $(CXXFLAGS) -c processing.cpp
+
 # The below rule will be used by unit_test.
-unit_test: unit_test_driver.o gerp.o
+unit_test: unit_test_driver.o gerp.o processing.o FSTree.o DirNode.o
 	$(CXX) $(CXXFLAGS) $^
 
 ##

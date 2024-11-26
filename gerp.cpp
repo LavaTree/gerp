@@ -11,6 +11,6 @@
 
 #include "gerp.h"
 
-void gerp::run(std::string dir, ostream &outFile) {
+void gerp::run(std::string dir, std::ostream &outFile) {
 
 }

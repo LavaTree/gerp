@@ -6,9 +6,11 @@
 */
 
 #include <string>
+#include "FSTree.h"
 using namespace std;
 
 string stripNonAlphaNum(string input);
 void traverseDirectory(string directory);
+void recTraverseHelper(string dir, DirNode *curr);
 
 #endif 
