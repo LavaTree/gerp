@@ -1,6 +1,6 @@
 /*
  *  gerp.cpp
- *  Drew Galen
+ *  Drew Galen & Pablo Herrera
  *  11/14/2024
  *
  *  CS 15 Proj 4: gerp

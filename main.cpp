@@ -1,7 +1,7 @@
 /*
  *  main.cpp
  *  Drew Galen
- *  Pablo Herra
+ *  Pablo Herrera
  *  11/25/2024
  *
  *  CS 15 Proj 4: gerp

@@ -1,6 +1,18 @@
+/*
+*  processing.cpp
+*  Drew Galen & Pablo Herrera 
+*  11/14/2024
+*
+*  CS 15 Proj 4: gerp
+*
+* This file implements the functions defined in processing.h
+*
+*/
+
 #include "processing.h"
 #include <string>
 #include <iostream>
+
 
 using namespace std;
 
@@ -14,19 +26,42 @@ using namespace std;
 string stripNonAlphaNum(string input) {
     std::string result;
 
-    //Only append letters and numbers
-    for (char c : input) {
-        if (c >= 'A' and c <= 'Z') {
-            result += c;
-        } else if (c >= 'a' && c <= 'z') {
-            result += c;
-        } else if (c >= '0' and c <= '9') {
-            result += c;
-        }
+    //Start and end indexes of the substring word
+    int start = 0;
+    int end = input.size();
+
+    while (start < input.size() and not isValidChar(input[start])) {
+        start++;
     }
 
-    return result;
+    if (start == end) return "";
+
+    while (end > start and not isValidChar(input[end])) {
+        end--;
+    }
+
+    int length = end - start + 1;
+
+    return input.substr(start, length);
 }
+
+/*
+ * name:      isValidChar( )
+ * purpose:   finds if a character is a valid letter or number 
+ * arguments: the char to check
+ * returns:   a boolean true if valid false otherwise
+ */
+bool isValidChar(char c) {
+    if (c >= 'A' and c <= 'Z') {
+        return true;
+    } else if (c >= 'a' and c <= 'z') {
+        return true;
+    } else if (c >= '0' and c <= '9') {
+        return true;
+    }
+    return false;
+}
+    
 
 /*
  * name:      traverseDirectory( )
@@ -51,19 +86,19 @@ void traverseDirectory(string directory) {
  */
 void recTraverseHelper(string dir, DirNode *curr) {
     
-    dir += curr->getName() + "/";
-
     //Not printing empty folders, only files
     if (curr->isEmpty()) return;
 
+    dir += curr->getName();
+
     //For every sub directory keep checking for internal directories
-    for (int i = 1; i <= curr->numSubDirs(); i++) {
+    for (int i = 0; i <= curr->numSubDirs() - 1; i++) {
         DirNode *next = curr->getSubDir(i);
-        recTraverseHelper(dir, next);
+        recTraverseHelper(dir + "/", next);
     }
 
     //For every file simply print file name with directory location
-    for (int i = 1; i <= curr->numFiles(); i++) {
+    for (int i = 0; i <= curr->numFiles() - 1; i++) {
         std::string name = curr->getFile(i);
         std::cout << dir << "/" << name << endl;
     }

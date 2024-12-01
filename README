@@ -1,5 +1,5 @@
-A The title of the homework and the author names (you and 
-your partner)
+CS 15 Proj 4: gerp
+Drew Galen & Pablo Herrera
 
 B The purpose of the program
 C Acknowledgements for any help you received, including 
@@ -8,8 +8,11 @@ references to outside sources you
 consulted (though there is no need list C++ references like
 cplusplus.com).
 
-D The files that you provided and a short description of what 
-each file is and its purpose
+processing.cpp:
+    Key operations within the gerp program
+
+processing.h:
+    Interface of processing.cpp
 
 E How to compile and run your program
 F An “architectural overview,” i.e., a description of how your 
@@ -30,6 +33,4 @@ H Details and an explanation of how you tested the various parts
 of your classes and the program as a whole. You may reference the 
 testing files that you submitted to aid in your explanation.
 
-I. Please let us know approximately how many hours you spent 
-working  on this project. This should include both weeks one and
-two.
+As of now 10 hours has been spent
