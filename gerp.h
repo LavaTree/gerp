@@ -40,8 +40,6 @@ class gerp {
 
       parser wordParse;
    
-      string stripNonAlphaNum(string input);
-      bool isValidChar(char c);
       void traverseDirectory(string directory);
       void recTraverseHelper(string dir, DirNode *curr);
 
