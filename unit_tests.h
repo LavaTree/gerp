@@ -18,9 +18,8 @@
 #include <cstdlib>
 #include <sstream>
 
-#include "processing.h"
-
-
+#include "gerp.h"
+#include "parser.h"
 
 // Test the frequency file with simple text files
 void frequency_simple() {
@@ -31,16 +30,16 @@ void frequency_simple() {
     std::string test3 = "-comp";
     std::string test4 = "@#comp?@!";
 
-    std::string stest = stripNonAlphaNum(test1);
+    std::string stest = toWord(test1);
     assert (stest == ref);
 
-    stest = stripNonAlphaNum(test2);
+    stest = toWord(test2);
     assert (stest == ref);
 
-    stest = stripNonAlphaNum(test3);
+    stest = toWord(test3);
     assert (stest == ref);
 
-    stest = stripNonAlphaNum(test4);
+    stest = toWord(test4);
     assert (stest == ref);
 
 }
@@ -54,48 +53,48 @@ void frequency_advanced() {
     std::string test3 = "$!@COMP-15@!";
     std::string test4 = "(*&^%$%^&*(*&^%^&COMP-15^)";
 
-    std::string stest = stripNonAlphaNum(test1);
+    std::string stest = toWord(test1);
     assert (stest == ref);
 
-    stest = stripNonAlphaNum(test2);
+    stest = toWord(test2);
     assert (stest == ref);
 
-    stest = stripNonAlphaNum(test3);
+    stest = toWord(test3);
     assert (stest == ref);
 
-    stest = stripNonAlphaNum(test4);
+    stest = toWord(test4);
     assert (stest == ref);
 
 }
 
-// Tests that stripNonAlphaNum() works on an empty string
+// Tests that toWord() works on an empty string
 void NonAlphaNum_empty() {
     std::string input = "";
-    std::string result = stripNonAlphaNum(input);
+    std::string result = toWord(input);
     assert(result == "");
 }
 
-// Tests that stripNonAlphaNum() works on a string with no alphanumerical 
+// Tests that toWord() works on a string with no alphanumerical 
 // characters
 void NonAlphaNum_no_chars() {
     std::string input = "!@#$%^&*()";
-    std::string result = stripNonAlphaNum(input);
+    std::string result = toWord(input);
     assert(result == "");
 }
 
-// Tests that stripNonAlphaNum() works on a string with only alphanumerical
+// Tests that toWord() works on a string with only alphanumerical
 // characters
 void NonAlphaNum_onlyAphaNum() {
     std::string input = "abc123";
-    std::string result = stripNonAlphaNum(input);
+    std::string result = toWord(input);
     assert(result == "abc123");
 }
 
 
-// Tests that stripNonAlphaNum() works with a string of only spaces
+// Tests that toWord() works with a string of only spaces
 void NonAlphaNum_onlyspaces() {
     std::string input = "     ";
-    std::string result = stripNonAlphaNum(input);
+    std::string result = toWord(input);
     assert(result == "");
 }
 

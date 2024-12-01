@@ -17,16 +17,38 @@
 #define _GERP_H
 
 #include <string>
-#include <map>
 #include <iostream>
 #include <fstream>
+#include <functional>
+
+#include "FSTree.h"
+#include "parser.h"
 
 class gerp {
    public:
         void run(std::string dir, std::ostream &outFile);
 
    private:
-    
+      struct entry {
+         std::string line;
+         std::string directory;
+         int lineNum;
+      };
+
+      std::hash<std::string> hashFunction;
+      std::vector<std::list<Entry>> table;
+
+      parser wordParse;
+   
+      string stripNonAlphaNum(string input);
+      bool isValidChar(char c);
+      void traverseDirectory(string directory);
+      void recTraverseHelper(string dir, DirNode *curr);
+
+      void AnyString();
+      void iAnyString();
+      void newOutputFile(std::ostream &outFile);
+      void quit();
     
 };
 
