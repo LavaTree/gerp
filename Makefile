@@ -20,12 +20,15 @@ main.o: main.cpp gerp.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 # This rule builds gerp.o
-gerp.o: gerp.h gerp.cpp FSTree.h DirNode.h
+gerp.o: gerp.h gerp.cpp parser.h hasher.h FSTree.h DirNode.h
 	$(CXX) $(CXXFLAGS) -c gerp.cpp
 
 # This rule builds parser.o
 parser.o: parser.cpp parser.h
 	$(CXX) $(CXXFLAGS) -c parser.cpp
+
+hasher.o: hasher.cpp hasher.h
+	$(CXX) $(CXXFLAGS) -c hasher.cpp
 
 # The below rule will be used by unit_test
 unit_test: unit_test_driver.o gerp.o gerp.o FSTree.o DirNode.o parser.o
