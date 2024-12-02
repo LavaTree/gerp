@@ -35,9 +35,6 @@ class gerp {
          int lineNum;
       };
 
-      std::hash<std::string> hashFunction;
-      std::vector<std::list<Entry>> table;
-
       parser wordParse;
    
       void traverseDirectory(string directory);
