@@ -27,16 +27,21 @@
 
 class gerp {
    public:
-        void run(std::string dir, std::ostream &outFile);
+        void run(std::string dir, std::ostream &oFile);
 
    private:
 
       parser wordParse;
-
       WordHashTable wordTable;
+      std::ostream outFile;
+
+      void query();
+      void AnyString();
+      void iAnyString();
+      void quit();
+      void newOutputFile();
    
       void traverseDirectory(string directory);
-
       void recTraverseHelper(string dir, DirNode *curr);
 
       void processFile(const string &filename, const string &dir);

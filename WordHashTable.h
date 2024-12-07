@@ -14,8 +14,10 @@ struct WordEntry {
     std::string word;
     std::string filename;
     std::string line;
-    WordEntry(const std::string& w, const std::string& f, const std::string& l)
-    : word(w), filename(f), line(l) {}
+    int lineNumber;
+    
+    WordEntry(const std::string& w, const std::string& f, const std::string& l, int lineNum)
+        : word(w), filename(f), line(l), lineNumber(lineNum) {}
 };
 
 class WordHashTable {
@@ -25,8 +27,7 @@ public:
     ~WordHashTable();
 
     // Adds a word along with some of its info to the hash table
-    void addWord(const string &word, const string &filename,
-                 const string &line);
+    void addWord(const string &word, const string &filename, const string &line, const int &lineNumber);
     
     // Searches for a word and returns a vector of all matching entries
     vector<WordEntry> searchWord(const string &word) const;
@@ -40,6 +41,7 @@ private:
     size_t tableSize;
     size_t insideTableSize;
 
+    double numEntries;
     // Computes the hash index for a given word
     size_t hashFunction(const string &word) const;
 
@@ -48,6 +50,8 @@ private:
 
     // Converts a string to lowercase
     string WordHashTable::toLowercase(string str);
+
+    void resizeTable();
 
 };
 

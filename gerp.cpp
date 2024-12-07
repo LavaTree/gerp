@@ -18,8 +18,59 @@ parser wordParse;
 WordHashTable wordTable;
 
 //Run program
-void gerp::run(std::string dir, std::ostream &outFile) {
+void gerp::run(std::string dir, std::ostream &oFile) {
+    outFile = oFile;
     traverseDirectory(dir);
+    query();
+}
+
+void gerp::query() {
+    while (true) {
+        std::string input;
+        std::cout << "Query? ";
+        std::cin >> input;
+        if (input == "@i") iAnyString();
+        else if (input == "@insensitive") iAnyString();
+        else if (input == "@q") quit();
+        else if (not std::getline(std::cin, input)) quit();
+        else if (input == "@f") newOutputFile;
+        else AnyString(input);
+       
+    }
+}
+
+void gerp::AnyString(std::string &queryWord) {
+    std::vector<WordEntry> results = wordTable.searchWord(queryWord);
+
+    if (results.empty()) {
+        std::cout << "query Not Found. Try with @insensitive or @i." << std::endl;
+    } else {
+        for (const auto &entry : results) {
+            std::cout << entry.filename << ":" << entry.line << ": " << std::endl;
+        }
+    }
+}
+
+void gerp::iAnyString() {
+
+}
+
+void gerp::quit() {
+    std::cout << "Goodbye! Thank you and have a nice day." << std::endl;;
+    return;
+}
+
+void gerp::newOutputFile() {
+    std::string file_name;
+    std::cin >> file_name;
+
+    if (outFile.is_open()) {
+        outFile.close();
+    }
+
+    outFile.open(file_name);
+    if (not outFile.is_open()) 
+        abort("Unable to open file " + file_name);
 }
 
 /*
@@ -88,7 +139,7 @@ void gerp::processFile(const string &filename, const string &dir) {
         while(iss >> word) {
             string strippedWord = wordParse.toWord(word);
             if(not strippedWord.empty()) {
-                wordTable.addWord(strippedWord, filename, "Line " + to_string(lineNumber));
+                wordTable.addWord(strippedWord, filename, line, lineNumber);
             }
         }
     }

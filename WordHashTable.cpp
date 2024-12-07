@@ -26,23 +26,29 @@ size_t WordHashTable::insideHashFunction(const string &word) const {
     return hasher(word) % insideTableSize;
 }
 
-void WordHashTable::addWord(const string &word, const string &filename,
-                            const string &lineInfo){
+void addWord(const string &word, const string &filename, const string &line, const int &lineNumber) {
     
     // gets the index if a given word
     size_t index = hashFunction(word);
     size_t insideIndex = insideHashFunction(word);
 
-    // inserts the WordEntry into the appropiate bucket
-    vector<WordEntry> &bucket = table[index][insideIndex];
+    WordEntry newEntry(word, filename, line, lineNumber);
+
+    // Check if the same word is already present in the bucket for the same file and line
     for (const WordEntry &entry : bucket) {
-        if (entry.word == word) {
-            // Avoid duplicates
+        if (entry.word == word and entry.filename == filename and entry.line == line) {
+            // Duplicate entry; do not add
             return;
         }
     }
 
-    bucket.push_back(entry);
+    bucket.push_back(newEntry);
+    numEntries++;
+
+    // Check load factor and resize if necessary
+    if (numEntries / (tableSize * insideTableSize) > 0.7) {
+        resizeTable();
+    }
 }
 
 
@@ -99,4 +105,30 @@ string WordHashTable::toLowercase(string str) {
         }
     }
     return str;
+}
+
+void WordHashTable::resizeTable() {
+    // Double the table size
+    size_t newTableSize = tableSize * 2;
+
+    // Create a new table with the new size
+    vector<vector<vector<WordEntry>>> newTable(newTableSize, vector<vector<WordEntry>>(insideTableSize));
+
+    // Rehash all entries into the new table
+    for (size_t i = 0; i < tableSize; i++) {
+        for (size_t j = 0; j < insideTableSize; j++) {
+            for (const WordEntry &entry : table[i][j]) {
+                // Compute new indices in the resized table
+                size_t newPrimaryIndex = hash<string>()(toLowercase(entry.word)) % newTableSize;
+                size_t newinsideIndex = hash<string>()(entry.word) % insideTableSize;
+
+                // Add the entry to the appropriate bucket in the new table
+                newTable[newPrimaryIndex][newinsideIndex].push_back(entry);
+            }
+        }
+    }
+
+    // Replace the old table with the new table and update the size
+    table = std::move(newTable);
+    tableSize = newTableSize;
 }
