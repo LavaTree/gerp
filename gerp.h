@@ -23,7 +23,7 @@
 
 #include "FSTree.h"
 #include "parser.h"
-#include "hasher.h"
+#include "WordHashTable.h"
 
 class gerp {
    public:
@@ -32,15 +32,14 @@ class gerp {
    private:
 
       parser wordParse;
-      hasher hashFunction;
+
+      WordHashTable wordTable;
    
       void traverseDirectory(string directory);
+
       void recTraverseHelper(string dir, DirNode *curr);
 
-      void AnyString();
-      void iAnyString();
-      void newOutputFile(std::ostream &outFile);
-      void quit();
+      void processFile(const string &filename, const string &dir);
     
 };
 

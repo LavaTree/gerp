@@ -10,10 +10,16 @@
  */
 
 #include "gerp.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+parser wordParse;
+WordHashTable wordTable;
 
 //Run program
 void gerp::run(std::string dir, std::ostream &outFile) {
-
+    traverseDirectory(dir);
 }
 
 /*
@@ -23,7 +29,7 @@ void gerp::run(std::string dir, std::ostream &outFile) {
  * arguments: the string name of the root directory
  * returns:   nothing
  */
-void traverseDirectory(string directory) {
+void gerp::traverseDirectory(string directory) {
     FSTree *tree = new FSTree(directory);
     recTraverseHelper("", tree->getRoot());
     delete tree;
@@ -37,7 +43,7 @@ void traverseDirectory(string directory) {
  * to the current directory to traverse
  * returns:   nothing
  */
-void recTraverseHelper(string dir, DirNode *curr) {
+void gerp::recTraverseHelper(string dir, DirNode *curr) {
     
     //Not printing empty folders, only files
     if (curr->isEmpty()) return;
@@ -52,9 +58,38 @@ void recTraverseHelper(string dir, DirNode *curr) {
 
     //For every file simply print file name with directory location
     for (int i = 0; i <= curr->numFiles() - 1; i++) {
-        std::string name = curr->getFile(i);
-        std::cout << dir << "/" << name << endl;
+        std::string filename = curr->getFile(i);
+        processFile(filename, dir);
     }
 
 }
 
+/*
+* name: processFile()
+* purpose: processes a file, adding its words to the hash table
+* arguments: the file path and a reference to WordHashTable
+* returns: nothing
+*/
+void gerp::processFile(const string &filename, const string &dir) {
+    ifstream fileStream(dir + "/" + filename);
+    if(not fileStream.is_open()) {
+        cerr << "Error opening file " << filename << endl;
+        return;
+    }
+
+    string line;
+    int lineNumber = 0;
+
+    while(getline(fileStream, line)) {
+        lineNumber++;
+        istringstream iss(line);
+        string word;
+
+        while(iss >> word) {
+            string strippedWord = wordParse.toWord(word);
+            if(not strippedWord.empty()) {
+                wordTable.addWord(strippedWord, filename, "Line " + to_string(lineNumber));
+            }
+        }
+    }
+}

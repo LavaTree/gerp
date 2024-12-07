@@ -12,26 +12,28 @@ CXXFLAGS = -g3 -Wall -Wextra -Wpedantic -Wshadow
 LDFLAGS  = -g3 
 
 # gerp rule - linking command
-gerp: gerp.o hasher.o main.o FSTree.o DirNode.o parser.o
-	${CXX} ${LDFLAGS} -o gerp gerp.o hasher.o main.o FSTree.o DirNode.o parser.o
+gerp: gerp.o WordHashTable.o main.o FSTree.o DirNode.o parser.o
+	${CXX} ${LDFLAGS} -o gerp gerp.o WordHashTable.o main.o FSTree.o DirNode.o parser.o
 
 # This rule builds main.o
 main.o: main.cpp gerp.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 # This rule builds gerp.o
-gerp.o: gerp.h gerp.cpp parser.h hasher.h FSTree.h DirNode.h
+gerp.o: gerp.cpp gerp.h DirNode.h FSTree.h parser.h WordHashTable.h
 	$(CXX) $(CXXFLAGS) -c gerp.cpp
+# This rule builds process.o
+processing.o: processing.h processing.cpp FSTree.h DirNode.h
+	$(CXX) $(CXXFLAGS) -c processing.cpp
 
-# This rule builds parser.o
-parser.o: parser.cpp parser.h
+parser.o: parser.h parser.cpp 
 	$(CXX) $(CXXFLAGS) -c parser.cpp
 
-hasher.o: hasher.cpp hasher.h
-	$(CXX) $(CXXFLAGS) -c hasher.cpp
+WordHashTable.o: WordHashTable.h WordHashTable.cpp 
+	$(CXX) $(CXXFLAGS) -c WordHashTable.cpp
 
-# The below rule will be used by unit_test
-unit_test: unit_test_driver.o gerp.o gerp.o FSTree.o DirNode.o parser.o
+# The below rule will be used by unit_test.
+unit_test: unit_test_driver.o gerp.o parser.o WordHashTable.o FSTree.o DirNode.o processing.o
 	$(CXX) $(CXXFLAGS) $^
 
 ##
@@ -49,4 +51,3 @@ clean:
 		-name '*.o' ! -name 'FSTree.o' ! -name 'DirNode.o' \
 		\) -exec rm -f {} \;
 	@rm -f *~ a.out
-

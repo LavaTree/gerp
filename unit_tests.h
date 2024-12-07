@@ -18,10 +18,13 @@
 #include <cstdlib>
 #include <sstream>
 
-#include "gerp.h"
-#include "parser.h"
+#include "processing.h"
+#include "WordHashTable.h"
+
+
 
 // Test the frequency file with simple text files
+// Results print to cout
 void frequency_simple() {
     std::string ref = "comp";
 
@@ -30,75 +33,64 @@ void frequency_simple() {
     std::string test3 = "-comp";
     std::string test4 = "@#comp?@!";
 
-    std::string stest = toWord(test1);
+    std::string stest = stripNonAlphaNum(test1);
     assert (stest == ref);
 
-    stest = toWord(test2);
+    stest = stripNonAlphaNum(test2);
     assert (stest == ref);
 
-    stest = toWord(test3);
+    stest = stripNonAlphaNum(test3);
     assert (stest == ref);
 
-    stest = toWord(test4);
-    assert (stest == ref);
-
-}
-
-// Test the frequency file with advanced text files
-void frequency_advanced() {
-    std::string ref = "COMP-15";
-
-    std::string test1 = "COMP-15";
-    std::string test2 = "@COMP-15";
-    std::string test3 = "$!@COMP-15@!";
-    std::string test4 = "(*&^%$%^&*(*&^%^&COMP-15^)";
-
-    std::string stest = toWord(test1);
-    assert (stest == ref);
-
-    stest = toWord(test2);
-    assert (stest == ref);
-
-    stest = toWord(test3);
-    assert (stest == ref);
-
-    stest = toWord(test4);
+    stest = stripNonAlphaNum(test4);
     assert (stest == ref);
 
 }
 
-// Tests that toWord() works on an empty string
+// Tests that stripNonAlphaNum() works on an empty string
 void NonAlphaNum_empty() {
     std::string input = "";
-    std::string result = toWord(input);
+    std::string result = stripNonAlphaNum(input);
     assert(result == "");
 }
 
-// Tests that toWord() works on a string with no alphanumerical 
+// Tests that stripNonAlphaNum() works on a string with no alphanumerical 
 // characters
 void NonAlphaNum_no_chars() {
     std::string input = "!@#$%^&*()";
-    std::string result = toWord(input);
+    std::string result = stripNonAlphaNum(input);
     assert(result == "");
 }
 
-// Tests that toWord() works on a string with only alphanumerical
+// Tests that stripNonAlphaNum() works on a string with only alphanumerical
 // characters
 void NonAlphaNum_onlyAphaNum() {
     std::string input = "abc123";
-    std::string result = toWord(input);
+    std::string result = stripNonAlphaNum(input);
     assert(result == "abc123");
 }
 
+// Tests that stripNonAlphaNum() works on a string that includes spaces
+void NonAlphaNum_withSpaces() {
+    std::string input = "a b c 1 2 3";
+    std::string result = stripNonAlphaNum(input);
+    assert(result == "abc123");
+}
 
-// Tests that toWord() works with a string of only spaces
+// Tests that stripNonAlphaNum() works on a string with the newline char
+void NonAlphaNum_newline() {
+    std::string input = "abc\n123";
+    std::string result = stripNonAlphaNum(input);
+    assert(result == "abc123");
+}
+
+// Tests that stripNonAlphaNum() works with a string of only spaces
 void NonAlphaNum_onlyspaces() {
     std::string input = "     ";
-    std::string result = toWord(input);
+    std::string result = stripNonAlphaNum(input);
     assert(result == "");
 }
 
-// Tests traverseDirectory() on a small directory
 void test_traverseDirectory() {
     system("mkdir -p test_dir/sub_dir");
     system("touch test_dir/file1.txt");
@@ -124,4 +116,37 @@ void test_traverseDirectory() {
 
 
     system("rm -rf test_dir");
+}
+
+void test_addWord() {
+    WordHashTable wordTable;
+    wordTable.addWord("hello", "file1.txt", "Line 1");
+
+    wordTable.printTable();
+    auto results = wordTable.searchWord("hello");
+    assert(results.size() == 1);
+}
+
+void test_addWord_duplicate() {
+    WordHashTable wordTable;
+    wordTable.addWord("hello", "file1.txt", "Line 1");
+    wordTable.addWord("hello", "file2.txt", "Line 2");
+
+    wordTable.printTable();
+
+    auto results = wordTable.searchWord("hello");
+    assert(results.size() == 2);
+}
+
+void test_addWord_case_sesitivity() {
+    WordHashTable wordTable;
+    wordTable.addWord("Hello", "file1.txt", "Line 1");
+    wordTable.addWord("hello", "file2.txt", "Line 2");
+
+    wordTable.printTable();
+
+    auto results1 = wordTable.searchWord("Hello");
+    auto results2 = wordTable.searchWord("hello");
+    assert(results1.size() == 1);
+    assert(results2.size() == 1);
 }
