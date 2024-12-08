@@ -31,6 +31,7 @@ public:
     
     // Searches for a word and returns a vector of all matching entries
     vector<WordEntry> searchWord(const string &word) const;
+    vector<WordEntry> searchInsensitive(const string &word) const;
 
     // Ptint all the entries in the hash table (USE FOR DEBUGGING)
     void printTable() const;
@@ -49,7 +50,7 @@ private:
     size_t insideHashFunction(const string &word) const;
 
     // Converts a string to lowercase
-    string WordHashTable::toLowercase(string str);
+    string toLowercase(string str) const;
 
     void resizeTable();
 

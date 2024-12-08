@@ -14,9 +14,9 @@ WordHashTable::~WordHashTable() {
 }
 
 size_t WordHashTable::hashFunction(const string &word) const {
-    // create an instance of std::hash for strings
     hash<string> hasher;
-    // return the hash value modulo number of buckets
+    
+    //Outside hash holds case insensitive word
     string iWord = toLowercase(word);
     return hasher(iWord) % tableSize;
 }
@@ -26,18 +26,18 @@ size_t WordHashTable::insideHashFunction(const string &word) const {
     return hasher(word) % insideTableSize;
 }
 
-void addWord(const string &word, const string &filename, const string &line, const int &lineNumber) {
+void WordHashTable::addWord(const string &word, const string &filename, const string &line, const int &lineNumber) {
     
     // gets the index if a given word
     size_t index = hashFunction(word);
     size_t insideIndex = insideHashFunction(word);
 
+    vector<WordEntry> &bucket = table[index][insideIndex];
     WordEntry newEntry(word, filename, line, lineNumber);
 
     // Check if the same word is already present in the bucket for the same file and line
     for (const WordEntry &entry : bucket) {
-        if (entry.word == word and entry.filename == filename and entry.line == line) {
-            // Duplicate entry; do not add
+        if (entry.filename == filename and entry.lineNumber == lineNumber) {
             return;
         }
     }
@@ -46,7 +46,7 @@ void addWord(const string &word, const string &filename, const string &line, con
     numEntries++;
 
     // Check load factor and resize if necessary
-    if (numEntries / (tableSize * insideTableSize) > 0.7) {
+    if ((numEntries / tableSize) > 0.7 or (numEntries / insideTableSize) > 0.7) {
         resizeTable();
     }
 }
@@ -76,7 +76,7 @@ vector<WordEntry> WordHashTable::searchInsensitive(const string &word) const {
 
     vector<WordEntry> result;
 
-    // Iterate through all inside buckets
+    // Iterate through all word entries inside bucket
     for (const vector<WordEntry> &bucket : insideTable) {
         for (const WordEntry &entry : bucket) {
             result.push_back(entry);
@@ -98,7 +98,7 @@ void WordHashTable::printTable() const {
     }
 }
 
-string WordHashTable::toLowercase(string str) {
+string WordHashTable::toLowercase(string str) const{
     for (int i = 0; i < str.length(); i++) {
         if (str[i] >= 'A' and str[i] <= 'Z') {
             str[i] += 32;

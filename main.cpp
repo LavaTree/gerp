@@ -34,10 +34,11 @@ int main(int argc, char *argv[])
 
     std::ofstream outFile;
     open_or_die(outFile, oName);
+    outFile.close();
 
     gerp program;
 
-    program.run(dir, outFile);
+    program.run(dir, oName);
 
     return 0;
 }
