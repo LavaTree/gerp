@@ -3,9 +3,13 @@
 
 using namespace std;
 
-WordHashTable::WordHashTable(size_t size) : tableSize(size) {
+WordHashTable::WordHashTable(size_t outerSize, size_t innerSize) : tableSize(outerSize), insideTableSize(innerSize) {
     // dynamically allocate memory for the hash table
-    table.resize(tableSize, vector<vector<WordEntry>>(insideTableSize));
+    table.resize(tableSize);
+
+    for (auto &bucket : table) {
+        bucket.resize(insideTableSize);
+    }
 }
 
 WordHashTable::~WordHashTable() {
@@ -110,6 +114,10 @@ string WordHashTable::toLowercase(string str) const{
 void WordHashTable::resizeTable() {
     // Double the table size
     size_t newTableSize = tableSize * 2;
+
+    std::cerr << "Resizing table. Current size: " << tableSize
+          << ", New size: " << newTableSize << std::endl;
+
 
     // Create a new table with the new size
     vector<vector<vector<WordEntry>>> newTable(newTableSize, vector<vector<WordEntry>>(insideTableSize));

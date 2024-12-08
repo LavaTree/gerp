@@ -23,7 +23,7 @@ struct WordEntry {
 class WordHashTable {
 public:
 
-    WordHashTable(size_t size = 100);
+    WordHashTable(size_t outerSize = 100, size_t innerSize = 10);
     ~WordHashTable();
 
     // Adds a word along with some of its info to the hash table
