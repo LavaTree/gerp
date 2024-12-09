@@ -35,9 +35,6 @@ class gerp {
 
       void abort(string error_message);
 
-      template<typename streamtype>
-      void open_or_die(streamtype &stream, std::string file_name);
-
       parser wordParse;
       WordHashTable wordTable;
       std::ofstream outFile;

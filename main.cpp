@@ -31,6 +31,10 @@ int main(int argc, char *argv[])
 
     std::string dir = argv[1]; 
     std::string oName = argv[2];
+    std::ofstream oFile;
+
+    open_or_die(oFile, oName);
+    oFile.close();
 
     gerp program;
 

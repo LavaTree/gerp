@@ -16,7 +16,6 @@
 
 //Run program
 void gerp::run(std::string dir, std::string filename) {
-    
     outFile.open(filename);
     traverseDirectory(dir);
     query();
@@ -45,7 +44,7 @@ void gerp::AnyString(std::string &queryWord) {
         std::cout << "query Not Found. Try with @insensitive or @i." << std::endl;
     } else {
         for (const auto &entry : results) {
-            std::cout << entry.filename << ":" << entry.line << ": " << std::endl;
+            outFile << entry.filename << ":" << entry.line << ": " << std::endl;
         }
     }
 }
@@ -54,10 +53,10 @@ void gerp::iAnyString() {
     std::string queryWord;
     std:: cin >> queryWord;
     queryWord = wordParse.toWord(queryWord);
-    std::vector<WordEntry> results = wordTable.searchWord(queryWord);
+    std::vector<WordEntry> results = wordTable.searchInsensitive(queryWord);
 
     if (results.empty()) {
-        outFile << "query Not Found." << std::endl;
+        std::cout << "query Not Found." << std::endl;
     } else {
         for (const auto &entry : results) {
             outFile << entry.filename << ":" << entry.lineNumber << ": " << entry.line << std::endl;
@@ -144,7 +143,6 @@ void gerp::processFile(const string &filename, const string &dir) {
         lineNumber++;
         istringstream iss(line);
         string word;
-
         while(iss >> word) {
             string strippedWord = wordParse.toWord(word);
             if(not strippedWord.empty()) {
