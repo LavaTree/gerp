@@ -40,7 +40,7 @@ class gerp {
       std::ofstream outFile;
 
       void query();
-      void AnyString(std::string &queryWord);
+      void AnyString(std::string &word);
       void iAnyString();
       void quit();
       void newOutputFile();

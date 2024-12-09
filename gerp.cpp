@@ -18,17 +18,18 @@
 void gerp::run(std::string dir, std::string filename) {
     outFile.open(filename);
     traverseDirectory(dir);
+    wordTable.printTable();
     query();
 }
 
 void gerp::query() {
     std::string input;
     while (input != "@q") {
+        
         std::cout << "Query? ";
         std::cin >> input;
         if (input == "@i") iAnyString();
         else if (input == "@insensitive") iAnyString();
-        else if (not std::getline(std::cin, input)) quit();
         else if (input == "@f") newOutputFile();
         else AnyString(input);
        
@@ -36,9 +37,11 @@ void gerp::query() {
     quit();
 }
 
-void gerp::AnyString(std::string &queryWord) {
-    queryWord = wordParse.toWord(queryWord);
-    std::vector<WordEntry> results = wordTable.searchWord(queryWord);
+void gerp::AnyString(std::string &word) {
+    std::string queryword;
+    queryword = wordParse.toWord(word);
+    cerr << queryword;
+    std::vector<WordEntry> results = wordTable.searchWord(queryword);
 
     if (results.empty()) {
         std::cout << "query Not Found. Try with @insensitive or @i." << std::endl;
@@ -51,6 +54,7 @@ void gerp::AnyString(std::string &queryWord) {
 
 void gerp::iAnyString() {
     std::string queryWord;
+    std:: cin >> queryWord;
     std:: cin >> queryWord;
     queryWord = wordParse.toWord(queryWord);
     std::vector<WordEntry> results = wordTable.searchInsensitive(queryWord);

@@ -50,7 +50,7 @@ void WordHashTable::addWord(const string &word, const string &filename, const st
     }
 
     if (innerBucket == nullptr) {
-        bucket.emplace_back();
+        bucket.push_back(vector<WordEntry>());
         innerBucket = &bucket.back();
     }
 
@@ -76,6 +76,9 @@ void WordHashTable::addWord(const string &word, const string &filename, const st
 
 
 vector<WordEntry> WordHashTable::searchWord(const string &word) const {
+ std::cerr << "Hash index for word '" << word << "': " << index << "\n";
+std::cerr << "Checking buckets in table[" << index << "]...\n";  
+   
     size_t index = hashFunction(word);
 
     const vector<vector<WordEntry>> &bucket = table[index];
@@ -84,7 +87,8 @@ vector<WordEntry> WordHashTable::searchWord(const string &word) const {
     // Find exact matches
  
     for (const auto &innerBucket : bucket) {
-        if (!innerBucket.empty() && innerBucket.front().word == word) {
+        if (not innerBucket.empty() and innerBucket.front().word == word)
+        if (not innerBucket.empty() and innerBucket.front().word == word) {
             return innerBucket;
         }
     }
@@ -112,9 +116,10 @@ vector<WordEntry> WordHashTable::searchInsensitive(const string &word) const {
 
 
 void WordHashTable::printTable() const {
+
     for (size_t i = 0; i < tableSize; i++) {
-        for (size_t j = 0; j < insideTableSizes[i]; j++) {
-            for (const WordEntry &entry : table[i][j]) {
+        for (const auto &innerBucket : table[i]) {
+            for (const WordEntry &entry : innerBucket) {
                 cout << "Word: " << entry.word << " in file: " << entry.filename
                      << " on line: " << entry.line << endl;
             }
