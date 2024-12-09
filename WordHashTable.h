@@ -23,7 +23,7 @@ struct WordEntry {
 class WordHashTable {
 public:
 
-    WordHashTable(size_t outerSize = 100, size_t innerSize = 10);
+    WordHashTable();
     ~WordHashTable();
 
     // Adds a word along with some of its info to the hash table
@@ -37,22 +37,27 @@ public:
     void printTable() const;
     
 private:
+    // Initial hash sizes
+    const int OUTER_SIZE = 100;
+    const int INNER_SIZE = 10;
+
     // Array of pointers to vectors of WordEntry objects
     vector<vector<vector<WordEntry>>> table;
     size_t tableSize;
-    size_t insideTableSize;
+    vector<size_t> insideTableSizes;
 
-    double numEntries;
     // Computes the hash index for a given word
     size_t hashFunction(const string &word) const;
 
     // Computes hash index for a case sensitive word
-    size_t insideHashFunction(const string &word) const;
+    size_t insideHashFunction(const string &word, int index) const;
 
     // Converts a string to lowercase
     string toLowercase(string str) const;
 
-    void resizeTable();
+    void resizeOuterTable();
+    void resizeInnerTable(size_t primaryIndex);
+
 
 };
 

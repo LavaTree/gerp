@@ -25,18 +25,18 @@ void gerp::run(std::string dir, std::string filename) {
 }
 
 void gerp::query() {
-    while (true) {
-        std::string input;
+    std::string input;
+    while (input != "@q") {
         std::cout << "Query? ";
         std::cin >> input;
         if (input == "@i") iAnyString();
         else if (input == "@insensitive") iAnyString();
-        else if (input == "@q") quit();
         else if (not std::getline(std::cin, input)) quit();
         else if (input == "@f") newOutputFile();
         else AnyString(input);
        
     }
+    quit();
 }
 
 void gerp::AnyString(std::string &queryWord) {
@@ -118,7 +118,7 @@ void gerp::recTraverseHelper(string dir, DirNode *curr) {
         recTraverseHelper(dir + "/", next);
     }
 
-    //For every file simply print file name with directory location
+    //For every file process into hash
     for (int i = 0; i <= curr->numFiles() - 1; i++) {
         std::string filename = curr->getFile(i);
         processFile(filename, dir);

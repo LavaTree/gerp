@@ -30,6 +30,8 @@ class gerp {
         void run(std::string dir, std::string filename);
 
    private:
+      const int OUTER_SIZE = 100;
+      const int INNER_SIZE = 10;
 
       parser wordParse;
       WordHashTable wordTable;
