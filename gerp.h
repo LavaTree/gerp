@@ -30,8 +30,13 @@ class gerp {
         void run(std::string dir, std::string filename);
 
    private:
-      const int OUTER_SIZE = 100;
-      const int INNER_SIZE = 10;
+
+      const string USAGE = "Usage: ./gerp inputDirectory outputFile";
+
+      void abort(string error_message);
+
+      template<typename streamtype>
+      void open_or_die(streamtype &stream, std::string file_name);
 
       parser wordParse;
       WordHashTable wordTable;

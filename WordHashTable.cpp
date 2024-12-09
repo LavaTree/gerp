@@ -14,6 +14,8 @@ WordHashTable::WordHashTable() {
     tableSize = OUTER_SIZE;
 
     insideTableSizes.resize(OUTER_SIZE, INNER_SIZE);
+
+
 }
 
 WordHashTable::~WordHashTable() {
@@ -35,7 +37,6 @@ size_t WordHashTable::insideHashFunction(const string &word, int index) const {
 }
 
 void WordHashTable::addWord(const string &word, const string &filename, const string &line, const int &lineNumber) {
-    
     // gets the index if a given word
     size_t index = hashFunction(word);
     size_t insideIndex = insideHashFunction(word, index);
@@ -52,11 +53,13 @@ void WordHashTable::addWord(const string &word, const string &filename, const st
 
     bucket.push_back(newEntry);
 
-    if ((double)table.size() / tableSize > 0.7) {
+    numEntries++;
+
+    if ((double)numEntries / tableSize > 0.7) {
         resizeOuterTable();
     }
 
-    if ((double)bucket.size() / insideTableSizes[index] > 0.7) {
+    if ((double)numEntries / insideTableSizes[index] > 0.7) {
         resizeInnerTable(index);
     }
 
@@ -128,9 +131,12 @@ void WordHashTable::resizeOuterTable() {
 
     // Rehash all entries into the new outer table
     for (size_t i = 0; i < tableSize; i++) {
+        newTable[i].resize(insideTableSizes[i]);
         for (size_t j = 0; j < insideTableSizes[i]; j++) {
             for (const WordEntry &entry : table[i][j]) {
                 size_t newPrimaryIndex = hash<string>()(toLowercase(entry.word)) % newTableSize;
+                            std::cerr << "Rehashing word: " << entry.word
+                          << " to new primary index: " << newPrimaryIndex << std::endl;
                 newTable[newPrimaryIndex][j].push_back(entry);
             }
         }

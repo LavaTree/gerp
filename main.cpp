@@ -32,10 +32,6 @@ int main(int argc, char *argv[])
     std::string dir = argv[1]; 
     std::string oName = argv[2];
 
-    std::ofstream outFile;
-    open_or_die(outFile, oName);
-    outFile.close();
-
     gerp program;
 
     program.run(dir, oName);

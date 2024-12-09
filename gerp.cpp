@@ -14,11 +14,9 @@
 #include <sstream>
 #include <iostream>
 
-parser wordParse;
-WordHashTable wordTable;
-
 //Run program
 void gerp::run(std::string dir, std::string filename) {
+    
     outFile.open(filename);
     traverseDirectory(dir);
     query();
@@ -119,7 +117,7 @@ void gerp::recTraverseHelper(string dir, DirNode *curr) {
     }
 
     //For every file process into hash
-    for (int i = 0; i <= curr->numFiles() - 1; i++) {
+    for (int i = 0; i < curr->numFiles(); i++) {
         std::string filename = curr->getFile(i);
         processFile(filename, dir);
     }

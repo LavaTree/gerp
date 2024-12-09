@@ -40,6 +40,7 @@ private:
     // Initial hash sizes
     const int OUTER_SIZE = 100;
     const int INNER_SIZE = 10;
+    int numEntries = 0;
 
     // Array of pointers to vectors of WordEntry objects
     vector<vector<vector<WordEntry>>> table;
