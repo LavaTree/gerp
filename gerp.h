@@ -41,9 +41,9 @@ class gerp {
 
       void query();
       void AnyString(std::string &word);
-      void iAnyString();
+      void iAnyString(std::string &word);
       void quit();
-      void newOutputFile();
+      void newOutputFile(std::string &file_name);
    
       void traverseDirectory(string directory);
       void recTraverseHelper(string dir, DirNode *curr);

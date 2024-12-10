@@ -38,9 +38,10 @@ public:
     
 private:
     // Initial hash sizes
-    const int OUTER_SIZE = 100;
+    const int OUTER_SIZE = 200;
     const int INNER_SIZE = 10;
     int numEntries = 0;
+    // std::vector<int> innerNumEntries;
 
     // Array of pointers to vectors of WordEntry objects
     vector<vector<vector<WordEntry>>> table;

@@ -24,15 +24,29 @@ void gerp::run(std::string dir, std::string filename) {
 
 void gerp::query() {
     std::string input;
-    while (input != "@q") {
-        
+    while (true) {
         std::cout << "Query? ";
-        std::cin >> input;
-        if (input == "@i") iAnyString();
-        else if (input == "@insensitive") iAnyString();
-        else if (input == "@f") newOutputFile();
-        else AnyString(input);
-       
+        std::getline(std::cin, input); 
+        std::istringstream iss(input);
+        std::string word;
+
+        iss >> word;
+        
+        if (input == "@q") {
+            quit();
+            return;
+        } else if (input == "@i") {
+            while (iss >> word) {      
+                iAnyString(word);  
+            }
+        } else if (input == "@f") {
+            iss >> word;
+            newOutputFile(word);
+        } else {
+            while (iss >> word) {  // Process each word individually
+                AnyString(word);
+            }
+        }
     }
     quit();
 }
@@ -47,16 +61,15 @@ void gerp::AnyString(std::string &word) {
         std::cout << "query Not Found. Try with @insensitive or @i." << std::endl;
     } else {
         for (const auto &entry : results) {
-            outFile << entry.filename << ":" << entry.line << ": " << std::endl;
+            outFile << entry.filename << ":" << entry.lineNumber << ": " << entry.line << std::endl;
         }
     }
 }
 
-void gerp::iAnyString() {
+void gerp::iAnyString(std::string &word) {
     std::string queryWord;
-    std:: cin >> queryWord;
-    std:: cin >> queryWord;
     queryWord = wordParse.toWord(queryWord);
+
     std::vector<WordEntry> results = wordTable.searchInsensitive(queryWord);
 
     if (results.empty()) {
@@ -73,9 +86,7 @@ void gerp::quit() {
     return;
 }
 
-void gerp::newOutputFile() {
-    std::string file_name;
-    std::cin >> file_name;
+void gerp::newOutputFile(std::string &file_name) {
 
     if (outFile.is_open()) {
         outFile.close();
@@ -143,6 +154,7 @@ void gerp::processFile(const string &filename, const string &dir) {
     string line;
     int lineNumber = 0;
 
+    cout << filename << endl << endl;
     while(getline(fileStream, line)) {
         lineNumber++;
         istringstream iss(line);
@@ -150,6 +162,7 @@ void gerp::processFile(const string &filename, const string &dir) {
         while(iss >> word) {
             string strippedWord = wordParse.toWord(word);
             if(not strippedWord.empty()) {
+                cout << strippedWord << " ";
                 wordTable.addWord(strippedWord, filename, line, lineNumber);
             }
         }

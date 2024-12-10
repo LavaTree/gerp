@@ -29,12 +29,12 @@ size_t WordHashTable::hashFunction(const string &word) const {
     //Outside hash holds case insensitive word
     string iWord = toLowercase(word);
 
-    return hasher(iWord) % tableSize;
+    return hasher(iWord);
 }
 
 void WordHashTable::addWord(const string &word, const string &filename, const string &line, const int &lineNumber) {
     // gets the index if a given word
-    size_t index = hashFunction(word);
+    size_t index = hashFunction(word) % tableSize;
 
 
     vector<vector<WordEntry>> &bucket = table[index];
@@ -52,6 +52,7 @@ void WordHashTable::addWord(const string &word, const string &filename, const st
     if (innerBucket == nullptr) {
         bucket.push_back(vector<WordEntry>());
         innerBucket = &bucket.back();
+        numEntries++;
     }
 
     for (const WordEntry &entry : *innerBucket) {
@@ -61,25 +62,21 @@ void WordHashTable::addWord(const string &word, const string &filename, const st
     }
 
     innerBucket->push_back(newEntry);
-    numEntries++;
 
     if ((double)numEntries / tableSize > 0.7) {
         resizeOuterTable();
     }
 
-    if ((double)numEntries / insideTableSizes[index] > 0.7) {
-        resizeInnerTable(index);
-    }
+    // if ((double)innerNumEntries[index] / insideTableSizes[index] > 0.7) {
+    //     resizeInnerTable(index);
+    // }
 
 }
 
 
 
-vector<WordEntry> WordHashTable::searchWord(const string &word) const {
- std::cerr << "Hash index for word '" << word << "': " << index << "\n";
-std::cerr << "Checking buckets in table[" << index << "]...\n";  
-   
-    size_t index = hashFunction(word);
+vector<WordEntry> WordHashTable::searchWord(const string &word) const { 
+    size_t index = hashFunction(word) % tableSize;
 
     const vector<vector<WordEntry>> &bucket = table[index];
     vector<WordEntry> result;
@@ -97,7 +94,7 @@ std::cerr << "Checking buckets in table[" << index << "]...\n";
 }
 
 vector<WordEntry> WordHashTable::searchInsensitive(const string &word) const {
-    size_t index = hashFunction(word);
+    size_t index = hashFunction(word) % tableSize;
     const vector<vector<WordEntry>> &bucket = table[index];
     const vector<WordEntry> *innerBucket;
 
@@ -120,8 +117,7 @@ void WordHashTable::printTable() const {
     for (size_t i = 0; i < tableSize; i++) {
         for (const auto &innerBucket : table[i]) {
             for (const WordEntry &entry : innerBucket) {
-                cout << "Word: " << entry.word << " in file: " << entry.filename
-                     << " on line: " << entry.line << endl;
+                cout << "(" << entry.word << ")" << entry.filename << "/" << entry.lineNumber << ": " <<  entry.line << endl;
             }
         }
     }
@@ -139,32 +135,50 @@ string WordHashTable::toLowercase(string str) const{
 void WordHashTable::resizeOuterTable() {
     size_t newTableSize = tableSize * 2;
 
-    std::cerr << "Resizing outer table. Current size: " << tableSize
-              << ", New size: " << newTableSize << std::endl;
+    cerr << "Resizing outer table. Current size: " << tableSize
+         << ", New size: " << newTableSize << endl;
 
-    vector<vector<vector<WordEntry>>> newTable(newTableSize);
+    // Create a new table with the updated size
+    std::vector<std::vector<std::vector<WordEntry>>> newTable(newTableSize);
 
     // Rehash all entries into the new outer table
     for (size_t i = 0; i < tableSize; i++) {
-        newTable[i].resize(insideTableSizes[i]);
         for (size_t j = 0; j < insideTableSizes[i]; j++) {
             for (const WordEntry &entry : table[i][j]) {
-                size_t newPrimaryIndex = hash<string>()(toLowercase(entry.word)) % newTableSize;
-                            std::cerr << "Rehashing word: " << entry.word
-                          << " to new primary index: " << newPrimaryIndex << std::endl;
+                size_t newPrimaryIndex = hashFunction(entry.word) % newTableSize;
+
+                // If the inner vector is empty, initialize it to the old size
+                if (newTable[newPrimaryIndex].empty()) {
+                    newTable[newPrimaryIndex].resize(insideTableSizes[i]);
+                }
+
+                // Insert the entry into the new table
                 newTable[newPrimaryIndex][j].push_back(entry);
             }
         }
     }
 
-    // Replace the old table with the new table and update the size
+    // Replace the old table with the new table and update the sizes
     table = std::move(newTable);
     tableSize = newTableSize;
+
+    cerr << "Resizing complete. New table size: " << tableSize << endl;
 }
+
 
 void WordHashTable::resizeInnerTable(size_t index) {
     size_t newInsideTableSize = insideTableSizes[index] * 2;
 
-    table[index].resize(newInsideTableSize);
+    std::vector<std::vector<WordEntry>> newInnerTable(newInsideTableSize);
+
+
+    for (size_t i = 0; i < table[index].size(); ++i) {
+        for (const WordEntry &entry : table[index][i]) {
+            newInnerTable[i].push_back(entry);
+        }
+    }
+
+    table[index] = std::move(newInnerTable);
+    insideTableSizes[index] = newInsideTableSize;
 }
 
