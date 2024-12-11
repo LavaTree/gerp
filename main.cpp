@@ -25,6 +25,15 @@ void abort(string error_message);
 template<typename streamtype>
 void open_or_die(streamtype &stream, std::string file_name);
 
+/*
+* Name: main()
+* Purpose: Entry point of program. Will parse command-line arguments and if
+*       arguments are correct, initializes a 'gerp'
+* Paramters:
+*       - int arg: number of command line arguments
+*       - char *argv[]: Array of strings
+* Return: 0 if the program runs succesfully, or abort with message if not
+*/
 int main(int argc, char *argv[])
 {
     if (argc != 3) abort(USAGE);

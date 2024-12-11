@@ -13,14 +13,31 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <set>
 
-//Run program
+/*
+* Name: run()
+* Purpose: Open the specified output file, initialize the hash table of words
+*   by processing the given directory, and start the query loop for user input
+* Paramenters: 
+*   - std::string dir: the name of the directory to process
+*   - std::string filename: the name of the file to write output to
+* Return: none
+*/
 void gerp::run(std::string dir, std::string filename) {
     outFile.open(filename);
     traverseDirectory(dir);
     query();
 }
 
+/*
+* Name: query()
+* Purpose: implements the query loop that handles user input. Processes
+*   commands and queries for searching words, changing output files, and
+*   terminating the program.
+* Parameters: none
+* Return: none
+*/
 void gerp::query() {
     std::string input, word;
     std::istringstream iss(input);
@@ -52,41 +69,102 @@ void gerp::query() {
     quit();
 }
 
+/*
+* Name: AnyString()
+* Purpose: Processes a case-sensitive word query by searching the hash table
+*   for matches. If a match is found it is outputted to the outputfile
+* Parameters: 
+*   - std::string &word: The address of the word to search for
+* Return: none
+*/
 void gerp::AnyString(std::string &word) {
-    std::string queryword;
-    queryword = wordParse.toWord(word);
+    std::string queryword = wordParse.toWord(word);
 
+    // Search for the word in the hash table
     std::vector<WordEntry> results = wordTable.searchWord(queryword);
 
     if (results.empty()) {
-        std::cout << "query Not Found. Try with @insensitive or @i." << std::endl;
+        outFile << word <<" Not Found. Try with @insensitive or @i." << std::endl;
     } else {
+        // Set to track seen entries using WordEntry objects
+        std::set<WordEntry> seenEntries;
+
+        // Process each entry in the results
         for (const auto &entry : results) {
-            outFile << entry.filename << ":" << entry.lineNumber << ": " << entry.line << std::endl;
+            // Debug: print the entry to verify if the comparison works
+            std::cout << "Processing: " << entry.word << " in " << entry.filename 
+                      << " at line " << entry.lineNumber << std::endl;
+            
+            // If the entry has not been seen before, print it and add it to the set
+            if (seenEntries.find(entry) == seenEntries.end()) {
+                outFile << entry.dir << "/";
+                outFile << entry.filename << ":" << entry.lineNumber << ": ";
+                outFile << entry.line << std::endl;
+
+                // Mark the entry as seen
+                seenEntries.insert(entry);
+            }
         }
     }
 }
 
-void gerp::iAnyString(std::string &word) {
-    std::string queryWord;
-    queryWord = wordParse.toWord(word);
 
+// /*
+// * Name: iAnyString()
+// * Purpose: Processes a case-insensitive word query by searching the hash table
+// *   for matches. If a match is found it is outputted to the outputfile
+// * Parameters:
+// *   - std::string &word: the address of the word to search for
+// * Return: none
+// */
+void gerp::iAnyString(std::string &word) {
+    std::string queryWord = wordParse.toWord(word);
+
+    // Search for the word in the hash table (case-insensitive)
     std::vector<WordEntry> results = wordTable.searchInsensitive(queryWord);
 
     if (results.empty()) {
-        std::cout << "query Not Found." << std::endl;
+        outFile << word << " Not Found." << std::endl;
     } else {
+        // Set to track unique word entries (using WordEntry objects)
+        std::set<WordEntry> seenEntries;
+
+        // Process each entry in the results
         for (const auto &entry : results) {
-            outFile << entry.filename << ":" << entry.lineNumber << ": " << entry.line << std::endl;
+            // Print the entry if it's not a duplicate (based on the full entry criteria)
+            if (seenEntries.find(entry) == seenEntries.end()) {
+                outFile << entry.dir << "/";
+                outFile << entry.filename << ":" << entry.lineNumber << ": ";
+                outFile << entry.line << std::endl;
+
+                // Mark the entry as seen for future checks
+                seenEntries.insert(entry);
+            }
         }
     }
 }
 
+
+/*
+* Name: quit()
+* Purpose: quit the program and print goodby message to cout
+* Paramters: none
+* Return: none
+*/
 void gerp::quit() {
     std::cout << "Goodbye! Thank you and have a nice day." << std::endl;;
     return;
 }
 
+/*
+* Name: newOutputFile()
+* Purpose: closes the current outputfile and opens a new file for output
+*   based on the provided file name.
+* Parameters:
+*   - std::string &filename: the address of a string with the name of the 
+*   new output file to be openes
+* Return: none
+*/
 void gerp::newOutputFile(std::string &file_name) {
 
     if (outFile.is_open()) {
@@ -162,7 +240,7 @@ void gerp::processFile(const string &filename, const string &dir) {
         while(iss >> word) {
             string strippedWord = wordParse.toWord(word);
             if(not strippedWord.empty()) {
-                wordTable.addWord(strippedWord, filename, line, lineNumber);
+                wordTable.addWord(strippedWord, filename, line, lineNumber, dir);
             }
         }
     }
