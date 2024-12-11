@@ -23,30 +23,32 @@ void gerp::run(std::string dir, std::string filename) {
 }
 
 void gerp::query() {
-    std::string input;
+    std::string input, word;
+    std::istringstream iss(input);
+    bool first = true;
+
     while (true) {
         std::cout << "Query? ";
-        std::getline(std::cin, input); 
-        std::istringstream iss(input);
-        std::string word;
+    
+        if (not iss or iss.eof() or first) {
+            std::getline(std::cin, input);
+            iss.clear();
+            iss.str(input);
+            first = false;
+        } 
 
         iss >> word;
         
-        if (input == "@q") {
+        if (word == "@q") {
             quit();
             return;
-        } else if (input == "@i") {
-            while (iss >> word) {      
-                iAnyString(word);  
-            }
-        } else if (input == "@f") {
+        } else if (word == "@i") {
+            iss >> word;
+            iAnyString(word);  
+        } else if (word == "@f") {
             iss >> word;
             newOutputFile(word);
-        } else {
-            while (iss >> word) {  // Process each word individually
-                AnyString(word);
-            }
-        }
+        } else AnyString(word); 
     }
     quit();
 }
@@ -54,7 +56,7 @@ void gerp::query() {
 void gerp::AnyString(std::string &word) {
     std::string queryword;
     queryword = wordParse.toWord(word);
-    cerr << queryword;
+
     std::vector<WordEntry> results = wordTable.searchWord(queryword);
 
     if (results.empty()) {
@@ -68,7 +70,7 @@ void gerp::AnyString(std::string &word) {
 
 void gerp::iAnyString(std::string &word) {
     std::string queryWord;
-    queryWord = wordParse.toWord(queryWord);
+    queryWord = wordParse.toWord(word);
 
     std::vector<WordEntry> results = wordTable.searchInsensitive(queryWord);
 
