@@ -18,7 +18,6 @@
 void gerp::run(std::string dir, std::string filename) {
     outFile.open(filename);
     traverseDirectory(dir);
-    wordTable.printTable();
     query();
 }
 
@@ -156,7 +155,6 @@ void gerp::processFile(const string &filename, const string &dir) {
     string line;
     int lineNumber = 0;
 
-    cout << filename << endl << endl;
     while(getline(fileStream, line)) {
         lineNumber++;
         istringstream iss(line);
@@ -164,7 +162,6 @@ void gerp::processFile(const string &filename, const string &dir) {
         while(iss >> word) {
             string strippedWord = wordParse.toWord(word);
             if(not strippedWord.empty()) {
-                cout << strippedWord << " ";
                 wordTable.addWord(strippedWord, filename, line, lineNumber);
             }
         }

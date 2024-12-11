@@ -46,6 +46,7 @@ void WordHashTable::addWord(const string &word, const string &filename, const st
     for (int i = 0; i < bucket.size(); i++) {  
         if (not bucket[i].empty() and word == bucket[i].front().word) {
             innerBucket = &bucket[i];
+            break;
         }  
     }
 
@@ -143,22 +144,23 @@ void WordHashTable::resizeOuterTable() {
 
     // Rehash all entries into the new outer table
     for (size_t i = 0; i < tableSize; i++) {
-        for (size_t j = 0; j < insideTableSizes[i]; j++) {
-            for (const WordEntry &entry : table[i][j]) {
+        for (const auto &innerBucket : table[i]) {
+            for (const WordEntry &entry : innerBucket) {
+                // Calculate the new index based on the updated table size
                 size_t newPrimaryIndex = hashFunction(entry.word) % newTableSize;
 
-                // If the inner vector is empty, initialize it to the old size
+                // Ensure the bucket exists before inserting
                 if (newTable[newPrimaryIndex].empty()) {
-                    newTable[newPrimaryIndex].resize(insideTableSizes[i]);
+                    newTable[newPrimaryIndex].resize(1); // Start with a single bucket
                 }
 
-                // Insert the entry into the new table
-                newTable[newPrimaryIndex][j].push_back(entry);
+                // Add the entry to the appropriate new bucket
+                newTable[newPrimaryIndex][0].push_back(entry);
             }
         }
     }
 
-    // Replace the old table with the new table and update the sizes
+    // Replace the old table with the new table and update the size
     table = std::move(newTable);
     tableSize = newTableSize;
 

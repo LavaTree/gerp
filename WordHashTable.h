@@ -38,7 +38,7 @@ public:
     
 private:
     // Initial hash sizes
-    const int OUTER_SIZE = 200;
+    const int OUTER_SIZE = 100;
     const int INNER_SIZE = 10;
     int numEntries = 0;
     // std::vector<int> innerNumEntries;
@@ -52,7 +52,7 @@ private:
     size_t hashFunction(const string &word) const;
 
     // Computes hash index for a case sensitive word
-    size_t insideHashFunction(const string &word, int index) const;
+    // size_t insideHashFunction(const string &word, int index) const;
 
     // Converts a string to lowercase
     string toLowercase(string str) const;
