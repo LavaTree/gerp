@@ -39,7 +39,7 @@ public:
 private:
     // Initial hash sizes
     const int OUTER_SIZE = 100;
-    const int INNER_SIZE = 10;
+    const int INNER_SIZE = 0;
     int numEntries = 0;
     // std::vector<int> innerNumEntries;
 
